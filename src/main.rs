@@ -6,6 +6,15 @@ use rand::seq::SliceRandom;
 
 mod types;
 
+const DEFAULT_SUBREDDITS: [&str; 6] = [
+    "memes",
+    "dankmemes",
+    "funny",
+    "antimeme",
+    "wholesomememes",
+    "me_irl"
+];
+
 struct AppState {
     client: Client,
 }
@@ -64,7 +73,13 @@ async fn user(data: web::Data<AppState>, subreddit: web::Path<String>) -> impl R
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
     env_logger::init_from_env(env_logger::Env::new().default_filter_or("info"));
-    println!("Starting on port {}", 8080);
+    println!("[i] starting on port {}", 8080);
+    let temp_client = Client::new();
+    for subreddit in DEFAULT_SUBREDDITS.iter() {
+        println!("[i] fetching memes from r/{}", subreddit.to_string());
+        let _ = get_memes_from_subreddt(&temp_client, subreddit.to_string()).await;
+    };
+    drop(temp_client);
     HttpServer::new(|| {
         App::new()
             .app_data(web::Data::new(AppState {
