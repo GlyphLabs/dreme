@@ -1,4 +1,4 @@
-# dream
+# dreme
 
 a simple (and really fast!) rest api that returns memes from reddit
 
